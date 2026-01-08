@@ -580,7 +580,21 @@
             input.value = '';
             const loadingId = 'loading-' + Date.now();
             document.getElementById('chatHistory').innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai">...</div>`;
-            const res = await callGemini(msg, "Anda pakar Jahe Hitam. Jawab singkat.");
+            
+            // --- UPDATED SYSTEM PROMPT FOR FRIENDLIER CHATBOT ---
+            const systemPrompt = `Anda adalah 'Pak Tani Cerdas', Customer Service Officer (CSO) virtual yang sangat ramah, profesional, dan ahli dalam budidaya Jahe Hitam (Kaempferia parviflora) untuk program Desa Binaan di Desa Lebak, Matesih (Kolaborasi UNS & Ratu Botani Solo). 
+
+            Panduan Gaya Bicara:
+            1.  **Sangat Ramah & Hangat**: Gunakan sapaan sopan dan nada bicara yang merangkul.
+            2.  **Informatif & Expert**: Berikan jawaban yang berbobot, jelas, dan solutif. Jangan menjawab terlalu pendek jika penjelasan diperlukan.
+            3.  **Struktur Jawaban**: 
+                -   Jawab pertanyaan inti dengan jelas.
+                -   Berikan sedikit konteks atau tips tambahan jika relevan.
+                -   **WAJIB DIKHIR**: Selalu tutup percakapan dengan menawarkan bantuan lanjutan. Contoh: "Semoga membantu! Adakah hal lain yang ingin Bapak/Ibu tanyakan?" atau "Apakah penjelasannya sudah cukup jelas? Silakan jika ada pertanyaan lain."
+
+            Fokus Topik: Budidaya Jahe Hitam, Potensi Ekonomi, Kesehatan, dan Program Kemitraan.`;
+
+            const res = await callGemini(msg, systemPrompt);
             document.getElementById(loadingId).remove();
             document.getElementById('chatHistory').innerHTML += `<div class="chat-bubble chat-ai shadow-sm">${marked.parse(res)}</div>`;
         }
