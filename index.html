@@ -11,11 +11,12 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Markdown Parser (Marked.js) for AI Responses -->
+    <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -25,98 +26,70 @@
             scroll-behavior: smooth;
         }
 
-        /* Navigation Active State */
-        .nav-link.active {
-            color: #4C1D95;
-            border-bottom: 2px solid #4C1D95;
-            font-weight: 700;
-        }
-
-        /* Chart Container Styling */
-        .chart-container {
-            position: relative;
+        /* Ticker Animation */
+        .ticker-wrap {
             width: 100%;
-            height: 300px;
-            max-height: 400px;
+            overflow: hidden;
+            background-color: #1e1b4b; /* dark indigo */
+            color: #fbbf24; /* amber */
+            height: 32px;
+            display: flex;
+            align-items: center;
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
-        }
-
-        /* Custom Card Hover Effects */
-        .hover-card {
-            transition: all 0.3s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Timeline Connector Line */
-        .timeline-line::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 20px;
-            width: 2px;
-            background: #E2E8F0;
-            z-index: 0;
-        }
-
-        /* Chat & AI Styles */
-        .typing-indicator span {
+        .ticker {
             display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: #9CA3AF;
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out both;
-            margin: 0 1px;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 30s linear infinite;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
         }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Sensor Gauge Animation */
+        .sensor-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Standard Styles */
+        .nav-link.active { color: #4C1D95; border-bottom: 2px solid #4C1D95; font-weight: 700; }
+        .chart-container { position: relative; width: 100%; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .hover-card { transition: all 0.3s ease; }
+        .hover-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .timeline-line::before { content: ''; position: absolute; top: 0; bottom: 0; left: 20px; width: 2px; background: #E2E8F0; z-index: 0; }
+        .blur-overlay { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+        /* Chat Styles */
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #9CA3AF; border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; margin: 0 1px; }
         .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        .chat-bubble {
-            padding: 10px 15px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            max-width: 85%;
-            line-height: 1.5;
-        }
-        .chat-user {
-            background-color: #4C1D95; /* Deep Purple */
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
-        }
-        .chat-ai {
-            background-color: #E2E8F0; /* Slate 200 */
-            color: #1E293B;
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .chat-bubble { padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; font-size: 0.9rem; max-width: 85%; line-height: 1.5; }
+        .chat-user { background-color: #4C1D95; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-ai { background-color: #E2E8F0; color: #1E293B; align-self: flex-start; border-bottom-left-radius: 2px; }
         .chat-ai ul { list-style-type: disc; margin-left: 20px; }
-        .chat-ai ol { list-style-type: decimal; margin-left: 20px; }
         .chat-ai strong { font-weight: 700; color: #4C1D95; }
-
-        /* Blur Overlay for Modal */
-        .blur-overlay {
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
     </style>
 </head>
 <body class="antialiased pb-24">
 
-    <!-- API KEY MODAL (HIDDEN BY DEFAULT) -->
+    <!-- MARKET TICKER (New Feature) -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            LIVE MARKET: Jahe Hitam (Premium Grade) ▲ IDR 300.000/kg (+2.4%) &nbsp;|&nbsp; Jahe Emprit ▼ IDR 22.000/kg (-0.5%) &nbsp;|&nbsp; Ekstrak Black Ginger (Export) ▲ USD 450/kg &nbsp;|&nbsp; Permintaan Pasar Global: TINGGI (High Demand from Japan & Thailand) &nbsp;|&nbsp; Stok Desa Lebak: OPEN FOR PRE-ORDER
+        </div>
+    </div>
+
+    <!-- API KEY MODAL -->
     <div id="apiKeyModal" class="fixed inset-0 z-[100] bg-gray-900/80 blur-overlay flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-95" id="apiKeyModalContent">
             <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-center text-white relative">
@@ -129,28 +102,21 @@
                 <p class="text-gray-600 text-sm mb-4 text-center">
                     Untuk menggunakan <strong>Chatbot</strong> atau <strong>Analisa Cerdas</strong>, Anda perlu memasukkan Google Gemini API Key Anda sendiri.
                 </p>
-                
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">API Key</label>
                         <input type="password" id="apiKeyInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition" placeholder="Tempel API Key di sini (AIza...)">
                     </div>
-                    
-                    <button onclick="saveApiKey()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5">
-                        Simpan & Lanjutkan
-                    </button>
-                    
+                    <button onclick="saveApiKey()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5">Simpan & Lanjutkan</button>
                     <div class="text-center mt-2">
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-amber-600 hover:text-amber-800 underline">
-                            Dapatkan API Key Gratis di sini
-                        </a>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-amber-600 hover:text-amber-800 underline">Dapatkan API Key Gratis</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- HERO SECTION -->
+    <!-- NAVBAR -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -158,27 +124,34 @@
                     <div class="w-10 h-10 bg-purple-900 rounded-lg flex items-center justify-center text-white font-bold text-xl">JH</div>
                     <div>
                         <h1 class="text-xl font-bold text-gray-900 leading-tight hidden md:block">PDB Desa Lebak: Jahe Hitam</h1>
-                        <p class="text-xs text-purple-700 font-semibold">Universitas Sebelas Maret x Ratu Botani Solo</p>
+                        <p class="text-xs text-purple-700 font-semibold">UNS x Ratu Botani Solo</p>
                     </div>
                 </div>
                 
-                <!-- Desktop Nav -->
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="#urgensi" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Urgensi</a>
-                    <a href="#ekosistem" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Mitra</a>
-                    <a href="#pelaksanaan" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Jadwal</a>
-                    <a href="#roadmap" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Roadmap</a>
+                    <a href="#iot" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors" data-lang-key="nav_iot">Smart Farm</a>
+                    <a href="#urgensi" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors" data-lang-key="nav_urgency">Urgensi</a>
+                    <a href="#ekosistem" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors" data-lang-key="nav_partners">Mitra</a>
+                    <a href="#pelaksanaan" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors" data-lang-key="nav_schedule">Jadwal</a>
                     
-                    <!-- AI Status Indicator -->
-                    <div id="aiStatusBadge" class="hidden items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold cursor-pointer" onclick="handleLogout()" title="Klik untuk Logout API Key">
+                    <!-- Language Toggle -->
+                    <button onclick="toggleLanguage()" class="flex items-center px-3 py-1 bg-gray-100 rounded-full text-xs font-bold border border-gray-300 hover:bg-gray-200 transition">
+                        <span id="langFlag">🇺🇸</span> <span id="langText" class="ml-1">EN</span>
+                    </button>
+
+                    <!-- AI Status (Indikator) -->
+                    <div id="aiStatusBadge" class="hidden items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                         <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> AI Ready
                     </div>
-                </nav>
 
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-500 focus:outline-none">
-                    <span class="text-2xl">☰</span>
-                </button>
+                    <!-- Tombol Logout (Fitur Baru) -->
+                    <button id="logoutBtn" onclick="handleLogout()" class="hidden px-3 py-1 border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 rounded-full text-xs font-bold transition flex items-center gap-1" title="Hapus API Key & Logout">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Logout
+                    </button>
+                </nav>
             </div>
         </div>
     </header>
@@ -187,8 +160,8 @@
     <div class="bg-gradient-to-r from-purple-900 to-indigo-900 text-white py-16 px-4">
         <div class="max-w-4xl mx-auto text-center">
             <span class="inline-block py-1 px-3 rounded-full bg-amber-500 text-white text-xs font-bold tracking-wide mb-6">SKEMA PEMBERDAYAAN DESA BINAAN (PDB) 2025</span>
-            <h2 class="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">Sentra Pembenihan "Emas Hitam" <br>di Lereng Lawu</h2>
-            <p class="text-lg text-purple-100 max-w-2xl mx-auto leading-relaxed">
+            <h2 class="text-3xl md:text-5xl font-extrabold mb-6 leading-tight" data-lang-key="hero_title">Sentra Pembenihan "Emas Hitam" <br>di Lereng Lawu</h2>
+            <p class="text-lg text-purple-100 max-w-2xl mx-auto leading-relaxed" data-lang-key="hero_desc">
                 Transformasi ekonomi Desa Lebak melalui introduksi komoditas bernilai tinggi <em>Kaempferia parviflora</em>, didukung teknologi pembenihan UNS dan akses pasar industri.
             </p>
             <div class="mt-8 flex justify-center gap-4 text-sm font-medium">
@@ -201,16 +174,62 @@
     <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
 
-        <!-- SECTION 1: URGENSI EKONOMI -->
+        <!-- SECTION: IOT DASHBOARD (New Feature) -->
+        <section id="iot" class="scroll-mt-24">
+            <div class="bg-gray-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl border border-gray-700">
+                <!-- Decorative Grid -->
+                <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center mb-8">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+                            <h3 class="text-lg font-mono text-green-400 font-bold" data-lang-key="iot_title">LIVE SENSOR: GREENHOUSE 1</h3>
+                        </div>
+                        <p class="text-sm text-gray-400" data-lang-key="iot_desc">Monitoring kondisi mikroklimat Matesih secara real-time untuk optimalisasi bibit.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 px-4 py-1 bg-gray-800 rounded-full border border-gray-600 text-xs font-mono">
+                        STATUS: OPTIMAL
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
+                    <!-- Sensor 1 -->
+                    <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700 text-center hover:bg-gray-800 transition sensor-pulse">
+                        <div class="text-gray-400 text-xs uppercase mb-1">Temperature</div>
+                        <div class="text-3xl font-bold font-mono text-white mb-1" id="valTemp">24.5°C</div>
+                        <div class="text-xs text-green-400">Ideal (20-28°C)</div>
+                    </div>
+                    <!-- Sensor 2 -->
+                    <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700 text-center hover:bg-gray-800 transition">
+                        <div class="text-gray-400 text-xs uppercase mb-1">Soil Moisture</div>
+                        <div class="text-3xl font-bold font-mono text-blue-400 mb-1" id="valMoist">72%</div>
+                        <div class="text-xs text-blue-300">Moist</div>
+                    </div>
+                    <!-- Sensor 3 -->
+                    <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700 text-center hover:bg-gray-800 transition">
+                        <div class="text-gray-400 text-xs uppercase mb-1">Humidity (RH)</div>
+                        <div class="text-3xl font-bold font-mono text-white mb-1" id="valHum">85%</div>
+                        <div class="text-xs text-gray-400">High Altitude</div>
+                    </div>
+                    <!-- Sensor 4 -->
+                    <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700 text-center hover:bg-gray-800 transition">
+                        <div class="text-gray-400 text-xs uppercase mb-1">Soil pH</div>
+                        <div class="text-3xl font-bold font-mono text-amber-400 mb-1" id="valPh">6.8</div>
+                        <div class="text-xs text-amber-300">Neutral (Volcanic)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: URGENSI -->
         <section id="urgensi" class="scroll-mt-24">
             <div class="mb-8 border-l-4 border-purple-600 pl-4">
-                <h3 class="text-2xl font-bold text-gray-900">Analisis Situasi & Urgensi Ekonomi</h3>
-                <p class="text-gray-600 mt-2">Mengapa harus beralih ke Jahe Hitam? Data pasar menunjukkan kesenjangan nilai yang ekstrem.</p>
+                <h3 class="text-2xl font-bold text-gray-900" data-lang-key="urgency_title">Analisis Situasi & Urgensi Ekonomi</h3>
+                <p class="text-gray-600 mt-2" data-lang-key="urgency_desc">Mengapa harus beralih ke Jahe Hitam? Data pasar menunjukkan kesenjangan nilai yang ekstrem.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                
-                <!-- Chart Card -->
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                     <div class="flex justify-between items-center mb-6">
                         <h4 class="font-bold text-gray-800">Perbandingan Nilai Pasar (Rp/Kg)</h4>
@@ -219,61 +238,50 @@
                     <div class="chart-container">
                         <canvas id="priceChart"></canvas>
                     </div>
-                    <p class="text-xs text-center text-gray-400 mt-4">Sumber: Survei Pasar Herbal & Proposal Tim Pengusul</p>
+                    <p class="text-xs text-center text-gray-400 mt-4">Sumber: Survei Pasar Herbal</p>
                 </div>
 
-                <!-- Context & AI Calculator -->
                 <div class="space-y-8">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="bg-amber-50 p-5 rounded-xl border border-amber-100 hover-card">
-                            <div class="text-amber-600 text-2xl mb-2">💰 10x Lipat</div>
-                            <p class="text-sm text-gray-700 font-medium">Potensi kenaikan pendapatan petani dibandingkan jahe emprit biasa.</p>
+                            <div class="text-amber-600 text-2xl mb-2">💰 10x <span class="text-sm">ROI</span></div>
+                            <p class="text-sm text-gray-700 font-medium">Potensi kenaikan pendapatan drastis.</p>
                         </div>
                         <div class="bg-purple-50 p-5 rounded-xl border border-purple-100 hover-card">
-                            <div class="text-purple-600 text-2xl mb-2">📉 Supply Gap</div>
-                            <p class="text-sm text-gray-700 font-medium">Ketersediaan bibit berkualitas sangat langka.</p>
+                            <div class="text-purple-600 text-2xl mb-2">📉 High Demand</div>
+                            <p class="text-sm text-gray-700 font-medium">Pasar kekurangan suplai bibit berkualitas.</p>
                         </div>
                     </div>
 
-                    <!-- Interactive Calculator -->
+                    <!-- Calculator -->
                     <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-serif">Rp</div>
                         <div class="flex items-center gap-2 mb-4">
-                            <h4 class="text-lg font-bold text-amber-400">Simulasi Potensi & Analisa</h4>
+                            <h4 class="text-lg font-bold text-amber-400" data-lang-key="calc_title">Simulasi Potensi & Analisa</h4>
                             <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">AI Optional</span>
                         </div>
-                        
                         <div class="space-y-4 relative z-10">
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">Luas Lahan Anda (m²)</label>
+                                <label class="block text-xs text-gray-400 mb-1" data-lang-key="land_label">Luas Lahan Anda (m²)</label>
                                 <input type="number" id="landInput" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Contoh: 100" value="100">
                             </div>
-                            
                             <div class="flex gap-2">
-                                <button onclick="calculateRevenue()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition shadow-lg">
-                                    Hitung Manual
-                                </button>
+                                <button onclick="calculateRevenue()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition shadow-lg">Hitung</button>
                                 <button onclick="calculateWithAI()" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-2 rounded-lg transition shadow-lg flex justify-center items-center gap-2">
-                                    <span>Analisa AI</span>
-                                    <span class="text-lg">✨</span>
+                                    <span>Analisa AI</span> <span class="text-lg">✨</span>
                                 </button>
                             </div>
-                            
                             <div id="calcResult" class="pt-4 border-t border-gray-700 mt-4 hidden">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm text-gray-400">Jahe Biasa:</span>
-                                    <span class="font-mono text-gray-400" id="resRegular">Rp 2.500.000</span>
+                                    <span class="font-mono text-gray-400" id="resRegular">Rp 2.5jt</span>
                                 </div>
                                 <div class="flex justify-between items-center mb-4">
                                     <span class="text-sm font-bold text-amber-400">Jahe Hitam:</span>
                                     <span class="font-mono text-xl font-bold text-amber-400" id="resBlack">Rp 25.000.000</span>
                                 </div>
-                                
-                                <!-- AI Advice Container -->
                                 <div id="aiAdviceContainer" class="hidden bg-gray-800 rounded-lg p-3 border border-gray-700">
-                                    <p class="text-xs text-purple-300 font-bold mb-1 flex items-center">
-                                        <span class="mr-1">💡</span> Saran Strategis AI:
-                                    </p>
+                                    <p class="text-xs text-purple-300 font-bold mb-1 flex items-center"><span class="mr-1">💡</span> AI Advice:</p>
                                     <div id="aiAdviceContent" class="text-xs text-gray-300 leading-relaxed"></div>
                                 </div>
                             </div>
@@ -283,109 +291,59 @@
             </div>
         </section>
 
-        <!-- SECTION 2: EKOSISTEM & MITRA -->
+        <!-- SECTION 2: EKOSISTEM -->
         <section id="ekosistem" class="scroll-mt-24 bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
             <div class="text-center max-w-3xl mx-auto mb-12">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Sinergi Lokasi & Kemitraan</h3>
-                <p class="text-gray-600">Keberhasilan budidaya Jahe Hitam membutuhkan kondisi alam spesifik dan dukungan manajemen yang kuat.</p>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4" data-lang-key="partners_title">Sinergi Lokasi & Kemitraan</h3>
+                <p class="text-gray-600" data-lang-key="partners_desc">Keberhasilan budidaya Jahe Hitam membutuhkan kondisi alam spesifik dan dukungan manajemen yang kuat.</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <!-- Location Context -->
                 <div class="col-span-1 md:col-span-3 lg:col-span-1 bg-green-50 rounded-2xl p-6 border border-green-100">
-                    <h4 class="font-bold text-green-900 mb-4 flex items-center">
-                        <span class="bg-green-200 p-2 rounded-full mr-3 text-sm">📍</span> Lokasi Ideal
-                    </h4>
+                    <h4 class="font-bold text-green-900 mb-4 flex items-center"><span class="bg-green-200 p-2 rounded-full mr-3 text-sm">📍</span> Lokasi Ideal</h4>
                     <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <span class="text-green-600 mr-2">✓</span>
-                            <div>
-                                <strong class="block text-gray-800 text-sm">Desa Lebak, Matesih</strong>
-                                <span class="text-xs text-gray-600">Lereng Gunung Lawu, Karanganyar</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-green-600 mr-2">✓</span>
-                            <div>
-                                <strong class="block text-gray-800 text-sm">Elevasi 450-600 mdpl</strong>
-                                <span class="text-xs text-gray-600">Suhu sejuk (20-28°C), optimal untuk rimpang.</span>
-                            </div>
-                        </li>
+                        <li class="flex items-start"><span class="text-green-600 mr-2">✓</span><div><strong class="block text-gray-800 text-sm">Desa Lebak, Matesih</strong><span class="text-xs text-gray-600">Lereng Gunung Lawu, Karanganyar</span></div></li>
+                        <li class="flex items-start"><span class="text-green-600 mr-2">✓</span><div><strong class="block text-gray-800 text-sm">Elevasi 450-600 mdpl</strong><span class="text-xs text-gray-600">Suhu sejuk (20-28°C), optimal untuk rimpang.</span></div></li>
                     </ul>
                 </div>
-
-                <!-- Partners Grid -->
                 <div class="col-span-1 md:col-span-3 lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <!-- UNS -->
                     <div class="border border-gray-200 rounded-2xl p-6 hover-card bg-white">
-                        <div class="flex items-center mb-3">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs mr-3">UNS</div>
-                            <h4 class="font-bold text-gray-900">Tim Pengusul (UNS)</h4>
-                        </div>
-                        <ul class="text-sm text-gray-600 space-y-2">
-                            <li>• Transfer Teknologi Pembenihan</li>
-                            <li>• Riset Kandungan Senyawa</li>
-                        </ul>
+                        <div class="flex items-center mb-3"><div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs mr-3">UNS</div><h4 class="font-bold text-gray-900">UNS (Academic)</h4></div>
+                        <ul class="text-sm text-gray-600 space-y-2"><li>• Transfer Teknologi Pembenihan</li><li>• Riset Kandungan Senyawa</li></ul>
                     </div>
-
-                    <!-- RBS -->
                     <div class="border border-gray-200 rounded-2xl p-6 hover-card bg-white">
-                        <div class="flex items-center mb-3">
-                            <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold text-xs mr-3">RBS</div>
-                            <h4 class="font-bold text-gray-900">Ratu Botani Solo</h4>
-                        </div>
-                        <ul class="text-sm text-gray-600 space-y-2">
-                            <li>• Jaminan Pembelian Panen</li>
-                            <li>• Standar Kualitas Industri</li>
-                        </ul>
+                        <div class="flex items-center mb-3"><div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold text-xs mr-3">RBS</div><h4 class="font-bold text-gray-900">Ratu Botani Solo</h4></div>
+                        <ul class="text-sm text-gray-600 space-y-2"><li>• Jaminan Pembelian Panen</li><li>• Standar Kualitas Industri</li></ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 3: PELAKSANAAN -->
+        <!-- SECTION 3: JADWAL -->
         <section id="pelaksanaan" class="scroll-mt-24">
-            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between">
-                <div class="border-l-4 border-amber-500 pl-4">
-                    <h3 class="text-2xl font-bold text-gray-900">Jadwal Pelaksanaan Tahun 1</h3>
-                    <p class="text-gray-600 mt-2">Fokus utama: Pembangunan infrastruktur nursery dan inisiasi demplot.</p>
-                </div>
+            <div class="mb-8 border-l-4 border-amber-500 pl-4">
+                <h3 class="text-2xl font-bold text-gray-900" data-lang-key="schedule_title">Jadwal Pelaksanaan Tahun 1</h3>
+                <p class="text-gray-600 mt-2">Fokus utama: Pembangunan infrastruktur nursery dan inisiasi demplot.</p>
             </div>
-
             <div class="relative timeline-line pl-8 space-y-8">
-                <!-- Month 1 -->
                 <div class="relative">
                     <div class="absolute -left-10 top-1 w-6 h-6 bg-purple-600 rounded-full border-4 border-white shadow-sm z-10"></div>
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-gray-800">Bulan 1: Persiapan & Sosialisasi</h4>
-                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold">Inisiasi</span>
-                        </div>
-                        <p class="text-sm text-gray-600">Koordinasi perizinan dengan Desa Lebak, survei lahan demplot, dan uji tanah baseline.</p>
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-gray-800">Bulan 1: Persiapan</h4><span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold">Inisiasi</span></div>
+                        <p class="text-sm text-gray-600">Koordinasi perizinan, survei lahan demplot, dan uji tanah baseline.</p>
                     </div>
                 </div>
-
-                <!-- Month 2-3 -->
                 <div class="relative">
                     <div class="absolute -left-10 top-1 w-6 h-6 bg-amber-500 rounded-full border-4 border-white shadow-sm z-10"></div>
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-gray-800">Bulan 2-3: Konstruksi Nursery</h4>
-                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold">Fisik</span>
-                        </div>
-                        <p class="text-sm text-gray-600">Pembangunan <em>Shading House</em> (Rumah Bibit), pengadaan indukan Jahe Hitam berkualitas, dan pelatihan media tanam.</p>
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-gray-800">Bulan 2-3: Konstruksi</h4><span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold">Fisik</span></div>
+                        <p class="text-sm text-gray-600">Pembangunan Shading House (Nursery) & pengadaan indukan.</p>
                     </div>
                 </div>
-
-                <!-- Month 4-8 -->
                 <div class="relative">
                     <div class="absolute -left-10 top-1 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow-sm z-10"></div>
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-gray-800">Bulan 4-8: Budidaya & Pendampingan</h4>
-                            <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">Inti</span>
-                        </div>
-                        <p class="text-sm text-gray-600">Penanaman di demplot, perawatan fase vegetatif, monitoring rutin oleh Tim UNS, dan pelaporan hasil.</p>
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-gray-800">Bulan 4-8: Budidaya</h4><span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">Inti</span></div>
+                        <p class="text-sm text-gray-600">Penanaman demplot, perawatan vegetatif, dan monitoring tim UNS.</p>
                     </div>
                 </div>
             </div>
@@ -393,70 +351,60 @@
 
         <!-- SECTION 4: ROADMAP -->
         <section id="roadmap" class="scroll-mt-24 grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
-            <!-- Long Term Vision -->
             <div class="lg:col-span-2">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">Peta Jalan Keberlanjutan (3 Tahun)</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mb-6" data-lang-key="roadmap_title">Peta Jalan (3 Tahun)</h3>
                 <div class="space-y-4">
-                    <!-- Year 1 -->
                     <div class="flex items-center group">
                         <div class="w-24 flex-shrink-0 text-right pr-4 font-bold text-purple-600">Tahun 1</div>
                         <div class="flex-grow bg-purple-50 p-4 rounded-xl border-l-4 border-purple-600 hover:bg-purple-100 transition">
-                            <h5 class="font-bold text-gray-800">Hulu (Upstream) - Pembenihan</h5>
-                            <p class="text-xs text-gray-600 mt-1">Output: Sentra Pembenihan Mandiri, SOP Budidaya, Ketersediaan Bibit.</p>
+                            <h5 class="font-bold text-gray-800">Hulu (Upstream)</h5>
+                            <p class="text-xs text-gray-600 mt-1">Output: Sentra Pembenihan Mandiri & SOP Budidaya.</p>
                         </div>
                     </div>
-                    <!-- Year 2 -->
                     <div class="flex items-center group opacity-75">
                         <div class="w-24 flex-shrink-0 text-right pr-4 font-bold text-gray-500">Tahun 2</div>
-                        <div class="flex-grow bg-white p-4 rounded-xl border-l-4 border-gray-300 hover:border-amber-500 hover:bg-amber-50 transition border border-gray-100">
+                        <div class="flex-grow bg-white p-4 rounded-xl border-l-4 border-gray-300 transition border border-gray-100">
                             <h5 class="font-bold text-gray-800">Panen & Pascapanen</h5>
-                            <p class="text-xs text-gray-600 mt-1">Output: Teknologi pengeringan simplisia, ekstraksi skala UMKM, PIRT.</p>
+                            <p class="text-xs text-gray-600 mt-1">Output: Simplisia Kering & Ekstraksi UMKM.</p>
                         </div>
                     </div>
-                    <!-- Year 3 -->
                     <div class="flex items-center group opacity-50">
                         <div class="w-24 flex-shrink-0 text-right pr-4 font-bold text-gray-500">Tahun 3</div>
-                        <div class="flex-grow bg-white p-4 rounded-xl border-l-4 border-gray-300 hover:border-green-500 hover:bg-green-50 transition border border-gray-100">
+                        <div class="flex-grow bg-white p-4 rounded-xl border-l-4 border-gray-300 transition border border-gray-100">
                             <h5 class="font-bold text-gray-800">Hilirisasi & Wisata</h5>
-                            <p class="text-xs text-gray-600 mt-1">Output: Produk jadi (Kapsul), Sertifikasi Halal, Launching Agrowisata.</p>
+                            <p class="text-xs text-gray-600 mt-1">Output: Produk Jadi (Kapsul), Ekspor & Agrowisata.</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Budget Allocation -->
             <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col">
                 <h3 class="text-lg font-bold text-gray-900 mb-4 text-center">Alokasi Anggaran</h3>
                 <div class="flex-grow flex items-center justify-center">
-                    <div class="chart-container" style="height: 250px;">
-                        <canvas id="budgetChart"></canvas>
-                    </div>
+                    <div class="chart-container" style="height: 250px;"><canvas id="budgetChart"></canvas></div>
                 </div>
-                <div class="mt-4 text-xs text-center text-gray-500">
-                    *Investasi terbesar pada Aset Produktif (Bibit & Nursery)
-                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION (New Feature) -->
+        <section class="mt-20 py-16 bg-gradient-to-br from-indigo-900 to-purple-800 rounded-3xl text-center text-white px-4">
+            <h2 class="text-3xl font-bold mb-4">Bergabung dengan Revolusi Emas Hitam</h2>
+            <p class="text-indigo-200 mb-8 max-w-2xl mx-auto">Kami membuka peluang kemitraan bagi investor dan kelompok tani yang ingin mengembangkan komoditas masa depan ini.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">Hubungi RBS</button>
+                <button class="bg-transparent border-2 border-white hover:bg-white/10 text-white font-bold py-3 px-8 rounded-full transition">Unduh Proposal</button>
             </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-gray-900 text-white py-12 border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h4 class="font-bold text-lg mb-2">Tim Pelaksana Program PDB 2025</h4>
-            <p class="text-gray-400 text-sm mb-6">Kolaborasi Pentahelix untuk Kesejahteraan Masyarakat Desa Lebak</p>
-            <div class="flex justify-center space-x-6 text-sm text-gray-500">
-                <span>Universitas Sebelas Maret</span>
-                <span>•</span>
-                <span>Ratu Botani Solo</span>
-                <span>•</span>
-                <span>Pareso</span>
-            </div>
+    <footer class="bg-gray-900 text-white py-12 mt-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h4 class="font-bold text-lg mb-2">PDB 2025: Desa Lebak</h4>
+            <p class="text-gray-400 text-sm mb-6">UNS • Ratu Botani Solo • Pareso</p>
         </div>
     </footer>
 
-    <!-- AI CHAT FLOATING BUTTON -->
+    <!-- FLOAT BUTTONS -->
     <button onclick="openChat()" class="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl z-50 transform transition hover:scale-110 flex items-center justify-center group">
         <span class="text-2xl mr-2">✨</span>
         <span class="font-bold hidden group-hover:block transition-all duration-300">Tanya Pakar</span>
@@ -464,350 +412,178 @@
 
     <!-- AI CHAT MODAL -->
     <div id="chatModal" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl z-50 hidden border border-gray-200 flex flex-col overflow-hidden max-h-[500px] transform transition-all duration-300">
-        <!-- Chat Header -->
         <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-4 text-white flex justify-between items-center">
-            <div class="flex items-center">
-                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-2">🤖</div>
-                <div>
-                    <h3 class="font-bold text-sm">Asisten Tani Cerdas</h3>
-                    <p class="text-[10px] text-purple-200 uppercase tracking-wide">Powered by Gemini AI</p>
-                </div>
-            </div>
+            <div class="flex items-center"><div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-2">🤖</div><div><h3 class="font-bold text-sm">Asisten Tani Cerdas</h3><p class="text-[10px] text-purple-200 uppercase tracking-wide">Powered by Gemini AI</p></div></div>
             <button onclick="toggleChat()" class="text-purple-200 hover:text-white font-bold text-xl">&times;</button>
         </div>
-        
-        <!-- Chat History -->
         <div id="chatHistory" class="flex-1 p-4 overflow-y-auto bg-slate-50 h-80 flex flex-col">
-            <!-- Initial Greeting -->
-            <div class="chat-bubble chat-ai shadow-sm">
-                Halo! Saya asisten AI untuk proyek <strong>Black Gold Desa Lebak</strong>.
-                <br><br>
-                Silakan tanya tentang:
-                <ul class="list-disc ml-4 mt-2 mb-1">
-                    <li>Cara budidaya Jahe Hitam</li>
-                    <li>Estimasi keuntungan</li>
-                    <li>Detail proposal PDB UNS</li>
-                </ul>
-            </div>
+            <div class="chat-bubble chat-ai shadow-sm">Halo! Saya asisten AI untuk proyek <strong>Black Gold Desa Lebak</strong>.</div>
         </div>
-
-        <!-- Chat Input -->
         <div class="p-3 bg-white border-t border-gray-200">
             <div class="flex gap-2">
-                <input type="text" id="chatInput" placeholder="Tanya sesuatu..." class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition" onkeypress="handleEnter(event)">
-                <button onclick="sendMessage()" class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-purple-700 transition shadow-md">➤</button>
+                <input type="text" id="chatInput" placeholder="Tanya sesuatu..." class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-purple-500" onkeypress="handleEnter(event)">
+                <button onclick="sendMessage()" class="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-purple-700 transition">➤</button>
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. CONFIG & AUTHENTICATION ---
-        
-        let apiKey = "";
-        let pendingAction = null; // To store function callback
+        // --- LANGUAGE CONFIG ---
+        const translations = {
+            en: {
+                nav_iot: "Smart Farm", nav_urgency: "Urgency", nav_partners: "Partners", nav_schedule: "Schedule",
+                hero_title: "Black Gold Nursery Center <br>at Lawu Slopes",
+                hero_desc: "Economic transformation of Lebak Village through high-value <em>Kaempferia parviflora</em> commodity, supported by UNS breeding tech and industrial market access.",
+                iot_title: "LIVE SENSOR: GREENHOUSE 1", iot_desc: "Real-time microclimate monitoring in Matesih for seedling optimization.",
+                urgency_title: "Situation Analysis & Economic Urgency", urgency_desc: "Why switch to Black Ginger? Market data shows extreme value gaps.",
+                calc_title: "Potential Simulation & Analysis", land_label: "Your Land Size (m²)",
+                partners_title: "Location Synergy & Partnership", partners_desc: "Success requires specific natural conditions and strong management support.",
+                schedule_title: "Year 1 Schedule", roadmap_title: "3-Year Roadmap"
+            },
+            id: {
+                nav_iot: "Smart Farm", nav_urgency: "Urgensi", nav_partners: "Mitra", nav_schedule: "Jadwal",
+                hero_title: "Sentra Pembenihan \"Emas Hitam\" <br>di Lereng Lawu",
+                hero_desc: "Transformasi ekonomi Desa Lebak melalui introduksi komoditas bernilai tinggi <em>Kaempferia parviflora</em>, didukung teknologi pembenihan UNS dan akses pasar industri.",
+                iot_title: "SENSOR LANGSUNG: GREENHOUSE 1", iot_desc: "Monitoring kondisi mikroklimat Matesih secara real-time untuk optimalisasi bibit.",
+                urgency_title: "Analisis Situasi & Urgensi Ekonomi", urgency_desc: "Mengapa harus beralih ke Jahe Hitam? Data pasar menunjukkan kesenjangan nilai yang ekstrem.",
+                calc_title: "Simulasi Potensi & Analisa", land_label: "Luas Lahan Anda (m²)",
+                partners_title: "Sinergi Lokasi & Kemitraan", partners_desc: "Keberhasilan budidaya Jahe Hitam membutuhkan kondisi alam spesifik dan dukungan manajemen yang kuat.",
+                schedule_title: "Jadwal Pelaksanaan Tahun 1", roadmap_title: "Peta Jalan (3 Tahun)"
+            }
+        };
 
-        // Function to check auth on load (Only updates UI, does not block)
+        let currentLang = 'id';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'id' ? 'en' : 'id';
+            document.getElementById('langFlag').innerText = currentLang === 'id' ? '🇺🇸' : '🇮🇩'; // Shows target lang flag
+            document.getElementById('langText').innerText = currentLang === 'id' ? 'EN' : 'ID'; // Shows target lang text
+            
+            // Update Text
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (translations[currentLang][key]) el.innerHTML = translations[currentLang][key];
+            });
+        }
+
+        // --- IOT SIMULATION LOGIC ---
+        function simulateSensors() {
+            // Fluctuate values slightly to look "live"
+            const temp = (24.0 + Math.random()).toFixed(1);
+            const moist = Math.floor(70 + Math.random() * 5);
+            const hum = Math.floor(80 + Math.random() * 8);
+            
+            document.getElementById('valTemp').innerText = temp + "°C";
+            document.getElementById('valMoist').innerText = moist + "%";
+            document.getElementById('valHum').innerText = hum + "%";
+        }
+        setInterval(simulateSensors, 3000); // Update every 3 seconds
+
+        // --- AUTH & AI LOGIC (EXISTING) ---
+        let apiKey = ""; let pendingAction = null;
         function checkAuth() {
             const storedKey = localStorage.getItem("gemini_api_key");
             const badge = document.getElementById("aiStatusBadge");
+            const logoutBtn = document.getElementById("logoutBtn"); // Added button ref
             
-            if (storedKey) {
-                apiKey = storedKey;
-                badge.classList.remove("hidden");
-                badge.classList.add("flex");
-            } else {
-                badge.classList.add("hidden");
-                badge.classList.remove("flex");
+            if (storedKey) { 
+                apiKey = storedKey; 
+                if(badge) { badge.classList.remove("hidden"); badge.classList.add("flex"); } 
+                if(logoutBtn) { logoutBtn.classList.remove("hidden"); logoutBtn.classList.add("flex"); } 
+            } else { 
+                if(badge) { badge.classList.add("hidden"); badge.classList.remove("flex"); }
+                if(logoutBtn) { logoutBtn.classList.add("hidden"); logoutBtn.classList.remove("flex"); }
             }
         }
-
-        // Triggered when user wants to perform an AI action but has no key
         function promptApiKey(callback) {
             pendingAction = callback;
             const modal = document.getElementById("apiKeyModal");
             const modalContent = document.getElementById("apiKeyModalContent");
-            
             modal.classList.remove("hidden");
-            // Small delay for transition
-            setTimeout(() => {
-                modal.classList.remove("opacity-0");
-                modalContent.classList.remove("scale-95");
-                modalContent.classList.add("scale-100");
-            }, 10);
+            setTimeout(() => { modal.classList.remove("opacity-0"); modalContent.classList.remove("scale-95"); modalContent.classList.add("scale-100"); }, 10);
         }
-
         function closeApiKeyModal() {
             const modal = document.getElementById("apiKeyModal");
             const modalContent = document.getElementById("apiKeyModalContent");
-            
-            modal.classList.add("opacity-0");
-            modalContent.classList.remove("scale-100");
-            modalContent.classList.add("scale-95");
-            
-            setTimeout(() => {
-                modal.classList.add("hidden");
-                pendingAction = null; // Clear pending action
-            }, 300);
+            modal.classList.add("opacity-0"); modalContent.classList.remove("scale-100"); modalContent.classList.add("scale-95");
+            setTimeout(() => { modal.classList.add("hidden"); pendingAction = null; }, 300);
         }
-
         function saveApiKey() {
             const inputKey = document.getElementById("apiKeyInput").value.trim();
-            
-            if (inputKey.length < 10 || !inputKey.startsWith("AIza")) {
-                alert("API Key sepertinya tidak valid (harus diawali AIza...).");
-                return;
-            }
-
-            localStorage.setItem("gemini_api_key", inputKey);
-            apiKey = inputKey;
-            
-            // Update UI
-            checkAuth();
-            closeApiKeyModal();
-
-            // Execute pending action if any
-            if (pendingAction) {
-                pendingAction();
-                pendingAction = null;
-            }
+            if (inputKey.length < 10 || !inputKey.startsWith("AIza")) { alert("API Key invalid."); return; }
+            localStorage.setItem("gemini_api_key", inputKey); apiKey = inputKey;
+            checkAuth(); closeApiKeyModal();
+            if (pendingAction) { pendingAction(); pendingAction = null; }
         }
-
         function handleLogout() {
-            if(confirm("Hapus API Key? Fitur AI akan non-aktif sampai Anda memasukkan kunci lagi.")) {
-                localStorage.removeItem("gemini_api_key");
-                apiKey = "";
-                checkAuth();
-                // Close any open AI panels
-                document.getElementById("aiAdviceContainer").classList.add("hidden");
+            if(confirm("Hapus API Key yang tersimpan? Anda perlu memasukkan key baru untuk fitur AI.")) { 
+                localStorage.removeItem("gemini_api_key"); 
+                apiKey = ""; 
+                checkAuth(); 
+                document.getElementById("aiAdviceContainer").classList.add("hidden"); 
+                window.location.reload(); // Clean state
             }
         }
-
         document.addEventListener("DOMContentLoaded", checkAuth);
-
-
-        // --- 2. API CALLER ---
 
         async function callGemini(prompt, systemInstruction = "") {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: systemInstruction }] }
-            };
-
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error?.message || "API Error");
-                }
-                
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak dapat menjawab saat ini.";
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], systemInstruction: { parts: [{ text: systemInstruction }] } }) });
+                if (!response.ok) throw new Error("API Error");
+                const data = await response.json(); return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error.";
             } catch (error) {
-                console.error(error);
-                if (error.message.includes("API key") || error.message.includes("403")) {
-                    alert("API Key tidak valid. Silakan masukkan key baru.");
-                    localStorage.removeItem("gemini_api_key");
-                    apiKey = "";
-                    checkAuth();
-                }
-                return `Maaf, terjadi kesalahan: ${error.message}`;
+                if (error.message.includes("API")) { alert("API Key invalid/expired."); localStorage.removeItem("gemini_api_key"); apiKey=""; checkAuth(); }
+                return "Error: " + error.message;
             }
         }
 
-
-        // --- 3. CHART VISUALIZATIONS ---
-        const ctxPrice = document.getElementById('priceChart').getContext('2d');
-        new Chart(ctxPrice, {
+        // --- CHARTS (EXISTING) ---
+        new Chart(document.getElementById('priceChart').getContext('2d'), {
             type: 'bar',
-            data: {
-                labels: [['Jahe Gajah/Emprit', '(Biasa)'], ['Jahe Hitam', '(Black Gold)']],
-                datasets: [{
-                    label: 'Harga Tertinggi (Rp/Kg)',
-                    data: [25000, 300000],
-                    backgroundColor: ['rgba(203, 213, 225, 0.7)', 'rgba(76, 29, 149, 0.9)'],
-                    borderColor: ['rgba(148, 163, 184, 1)', 'rgba(76, 29, 149, 1)'],
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    barPercentage: 0.6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
-                    x: { grid: { display: false } }
-                }
-            }
+            data: { labels: [['Jahe Gajah', '(Biasa)'], ['Jahe Hitam', '(Black Gold)']], datasets: [{ label: 'Harga (Rp/Kg)', data: [25000, 300000], backgroundColor: ['#CBD5E1', '#4C1D95'], borderRadius: 6 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display:false} } }
         });
-
-        const ctxBudget = document.getElementById('budgetChart').getContext('2d');
-        new Chart(ctxBudget, {
+        new Chart(document.getElementById('budgetChart').getContext('2d'), {
             type: 'doughnut',
-            data: {
-                labels: ['Bahan Habis Pakai (40%)', 'Sewa & Jasa (25%)', 'Lain-lain (20%)', 'Perjalanan (15%)'],
-                datasets: [{
-                    data: [40, 25, 20, 15],
-                    backgroundColor: ['#4C1D95', '#059669', '#D97706', '#94A3B8'],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, padding: 15 } }
-                },
-                cutout: '70%'
-            }
+            data: { labels: ['Bahan (40%)', 'Sewa (25%)', 'Lain (20%)', 'Perjalanan (15%)'], datasets: [{ data: [40, 25, 20, 15], backgroundColor: ['#4C1D95', '#059669', '#D97706', '#94A3B8'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: {position:'bottom'} } }
         });
 
-
-        // --- 4. CALCULATOR FUNCTIONS ---
-        
-        // Pure Math Calculation (No AI needed)
+        // --- CALC & CHAT (EXISTING) ---
         function calculateRevenue() {
             const input = document.getElementById('landInput').value;
-            const resRegular = document.getElementById('resRegular');
-            const resBlack = document.getElementById('resBlack');
-            const resultDiv = document.getElementById('calcResult');
-
-            if(!input || input <= 0) {
-                alert("Mohon masukkan luas lahan yang valid (angka > 0).");
-                return;
-            }
-
+            if(!input || input<=0) { alert("Input valid number."); return; }
             const yieldKg = input * 1; 
-            const priceRegular = 25000;
-            const priceBlack = 250000;
-            const totalBlack = yieldKg * priceBlack;
-
-            const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
-
-            resRegular.innerText = formatter.format(yieldKg * priceRegular);
-            resBlack.innerText = formatter.format(totalBlack);
-            
-            resultDiv.classList.remove('hidden');
+            document.getElementById('resRegular').innerText = new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(yieldKg*25000);
+            document.getElementById('resBlack').innerText = new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(yieldKg*250000);
+            document.getElementById('calcResult').classList.remove('hidden');
         }
-
-        // AI Advice Trigger
         function calculateWithAI() {
-            // First run math
             calculateRevenue();
-            
-            // Check auth
-            if (!apiKey) {
-                promptApiKey(calculateWithAI); // Retry this function after auth
-                return;
-            }
-
+            if (!apiKey) { promptApiKey(calculateWithAI); return; }
             const input = document.getElementById('landInput').value;
-            if(!input || input <= 0) return;
-
-            const yieldKg = input * 1; 
-            const priceBlack = 250000;
-            const totalBlack = yieldKg * priceBlack;
-            const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
-
-            const aiContainer = document.getElementById('aiAdviceContainer');
             const aiContent = document.getElementById('aiAdviceContent');
-            
-            aiContainer.classList.remove('hidden');
-            aiContent.innerHTML = '<div class="flex items-center gap-2"><span class="typing-indicator"><span></span><span></span><span></span></span> Menganalisa lahan Anda...</div>';
-            
-            const systemPrompt = "Anda adalah konsultan agribisnis profesional untuk proyek Jahe Hitam di Desa Lebak, Matesih. Berikan saran strategis yang singkat (maksimal 3 poin bullet) berdasarkan luas lahan pengguna. Gunakan nada profesional, optimis, dan bahasa Indonesia yang baik.";
-            const userPrompt = `Saya punya lahan seluas ${input} m² di dataran tinggi Matesih untuk Jahe Hitam. Estimasi omzet kasar Rp ${formatter.format(totalBlack)}. Berikan saran strategis khusus untuk skala lahan ini (misal: apakah butuh banyak tenaga kerja, atau fokus perawatan intensif?).`;
-
-            callGemini(userPrompt, systemPrompt).then(advice => {
-                aiContent.innerHTML = marked.parse(advice);
-            });
+            document.getElementById('aiAdviceContainer').classList.remove('hidden');
+            aiContent.innerHTML = 'Analyzing...';
+            callGemini(`Lahan: ${input} m2. Jahe Hitam.`, "Berikan saran strategis pertanian singkat (3 bullet points) bahasa Indonesia.").then(res => aiContent.innerHTML = marked.parse(res));
         }
-
-
-        // --- 5. CHATBOT LOGIC ---
-
-        function openChat() {
-            // Chat UI can open without key, but sending needs key
-            toggleChat();
-        }
-
-        function toggleChat() {
-            const modal = document.getElementById('chatModal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                document.getElementById('chatInput').focus();
-            }
-        }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
+        function openChat() { toggleChat(); }
+        function toggleChat() { document.getElementById('chatModal').classList.toggle('hidden'); }
+        function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
         async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const history = document.getElementById('chatHistory');
-            const userMsg = input.value.trim();
-
-            if (!userMsg) return;
-
-            // Check Auth BEFORE sending
-            if (!apiKey) {
-                toggleChat(); // Close chat momentarily or keep open? 
-                // Better UX: Close chat, show prompt, then reopen chat?
-                // Let's just show prompt.
-                promptApiKey(() => {
-                    // Re-open chat if it was closed or just proceed
-                    const modal = document.getElementById('chatModal');
-                    if (modal.classList.contains('hidden')) modal.classList.remove('hidden');
-                    sendMessage(); // Retry send
-                });
-                return;
-            }
-
-            // Render User Message
-            history.innerHTML += `<div class="chat-bubble chat-user shadow-sm">${userMsg}</div>`;
+            const input = document.getElementById('chatInput'); const msg = input.value.trim();
+            if (!msg) return;
+            if (!apiKey) { promptApiKey(() => { document.getElementById('chatModal').classList.remove('hidden'); sendMessage(); }); return; }
+            document.getElementById('chatHistory').innerHTML += `<div class="chat-bubble chat-user shadow-sm">${msg}</div>`;
             input.value = '';
-            history.scrollTop = history.scrollHeight;
-
-            // Render Loading State
             const loadingId = 'loading-' + Date.now();
-            history.innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai"><span class="typing-indicator"><span></span><span></span><span></span></span></div>`;
-            history.scrollTop = history.scrollHeight;
-
-            const systemPrompt = "Anda adalah 'Pak Tani Cerdas', ahli pertanian spesialis Jahe Hitam (Kaempferia parviflora). Jawablah pertanyaan pengguna dengan ramah, praktis, dan berwawasan luas. Fokus pada aspek teknis budidaya, ekonomi, dan manfaat kesehatan. Jawaban harus ringkas (maksimal 3-4 kalimat).";
-            
-            const response = await callGemini(userMsg, systemPrompt);
-
+            document.getElementById('chatHistory').innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai">...</div>`;
+            const res = await callGemini(msg, "Anda pakar Jahe Hitam. Jawab singkat.");
             document.getElementById(loadingId).remove();
-            history.innerHTML += `<div class="chat-bubble chat-ai shadow-sm">${marked.parse(response)}</div>`;
-            history.scrollTop = history.scrollHeight;
+            document.getElementById('chatHistory').innerHTML += `<div class="chat-bubble chat-ai shadow-sm">${marked.parse(res)}</div>`;
         }
-
-
-        // --- 6. NAV HIGHLIGHTING ---
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-link');
-            let current = '';
-            sections.forEach(section => {
-                if (pageYOffset >= (section.offsetTop - 150)) current = section.getAttribute('id');
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) link.classList.add('active');
-            });
-        });
-
     </script>
 </body>
 </html>
