@@ -17,7 +17,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Chosen Palette: Royal Harvest -->
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -108,41 +107,42 @@
         .chat-ai ol { list-style-type: decimal; margin-left: 20px; }
         .chat-ai strong { font-weight: 700; color: #4C1D95; }
 
-        /* Login Overlay Blur */
+        /* Blur Overlay for Modal */
         .blur-overlay {
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
     </style>
 </head>
 <body class="antialiased pb-24">
 
-    <!-- LOGIN OVERLAY (GATEKEEPER) -->
-    <div id="loginOverlay" class="fixed inset-0 z-[100] bg-gray-900/90 blur-overlay flex items-center justify-center p-4 transition-opacity duration-500">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-100">
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-900 p-8 text-center text-white">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🔐</div>
-                <h2 class="text-2xl font-bold mb-2">Akses Dashboard PDB</h2>
-                <p class="text-purple-200 text-sm">Desa Lebak: Jahe Hitam</p>
+    <!-- API KEY MODAL (HIDDEN BY DEFAULT) -->
+    <div id="apiKeyModal" class="fixed inset-0 z-[100] bg-gray-900/80 blur-overlay flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-95" id="apiKeyModalContent">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-center text-white relative">
+                <button onclick="closeApiKeyModal()" class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">✨</div>
+                <h2 class="text-xl font-bold">Aktifkan Fitur AI</h2>
+                <p class="text-amber-100 text-xs">Gemini AI Consultant</p>
             </div>
-            <div class="p-8">
-                <p class="text-gray-600 text-sm mb-6 text-center">
-                    Untuk menggunakan fitur AI (Kalkulator & Chatbot), silakan masukkan <strong>Google Gemini API Key</strong> Anda sendiri.
+            <div class="p-6">
+                <p class="text-gray-600 text-sm mb-4 text-center">
+                    Untuk menggunakan <strong>Chatbot</strong> atau <strong>Analisa Cerdas</strong>, Anda perlu memasukkan Google Gemini API Key Anda sendiri.
                 </p>
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">API Key Anda</label>
-                        <input type="password" id="apiKeyInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" placeholder="Tempel API Key di sini (AIza...)">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">API Key</label>
+                        <input type="password" id="apiKeyInput" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition" placeholder="Tempel API Key di sini (AIza...)">
                     </div>
                     
-                    <button onclick="handleLogin()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5">
-                        Masuk Dashboard
+                    <button onclick="saveApiKey()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5">
+                        Simpan & Lanjutkan
                     </button>
                     
-                    <div class="text-center mt-4">
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-purple-600 hover:text-purple-800 underline">
-                            Belum punya kunci? Dapatkan gratis di sini
+                    <div class="text-center mt-2">
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-amber-600 hover:text-amber-800 underline">
+                            Dapatkan API Key Gratis di sini
                         </a>
                     </div>
                 </div>
@@ -169,10 +169,10 @@
                     <a href="#pelaksanaan" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Jadwal</a>
                     <a href="#roadmap" class="nav-link text-gray-500 hover:text-purple-700 px-3 py-2 text-sm font-medium transition-colors">Roadmap</a>
                     
-                    <!-- Logout Button -->
-                    <button onclick="handleLogout()" class="text-xs border border-red-200 text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-full transition" title="Hapus API Key">
-                        Logout API
-                    </button>
+                    <!-- AI Status Indicator -->
+                    <div id="aiStatusBadge" class="hidden items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold cursor-pointer" onclick="handleLogout()" title="Klik untuk Logout API Key">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> AI Ready
+                    </div>
                 </nav>
 
                 <!-- Mobile Menu Button -->
@@ -201,7 +201,7 @@
     <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
 
-        <!-- SECTION 1: URGENSI EKONOMI (THE WHY) -->
+        <!-- SECTION 1: URGENSI EKONOMI -->
         <section id="urgensi" class="scroll-mt-24">
             <div class="mb-8 border-l-4 border-purple-600 pl-4">
                 <h3 class="text-2xl font-bold text-gray-900">Analisis Situasi & Urgensi Ekonomi</h3>
@@ -224,7 +224,6 @@
 
                 <!-- Context & AI Calculator -->
                 <div class="space-y-8">
-                    <!-- Key Insights -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="bg-amber-50 p-5 rounded-xl border border-amber-100 hover-card">
                             <div class="text-amber-600 text-2xl mb-2">💰 10x Lipat</div>
@@ -232,16 +231,16 @@
                         </div>
                         <div class="bg-purple-50 p-5 rounded-xl border border-purple-100 hover-card">
                             <div class="text-purple-600 text-2xl mb-2">📉 Supply Gap</div>
-                            <p class="text-sm text-gray-700 font-medium">Ketersediaan bibit berkualitas sangat langka, pasar didominasi impor.</p>
+                            <p class="text-sm text-gray-700 font-medium">Ketersediaan bibit berkualitas sangat langka.</p>
                         </div>
                     </div>
 
-                    <!-- Interactive Calculator with AI -->
+                    <!-- Interactive Calculator -->
                     <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-serif">Rp</div>
                         <div class="flex items-center gap-2 mb-4">
-                            <h4 class="text-lg font-bold text-amber-400">Simulasi Potensi & Analisa AI</h4>
-                            <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full animate-pulse">✨ Gemini Enabled</span>
+                            <h4 class="text-lg font-bold text-amber-400">Simulasi Potensi & Analisa</h4>
+                            <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">AI Optional</span>
                         </div>
                         
                         <div class="space-y-4 relative z-10">
@@ -249,10 +248,16 @@
                                 <label class="block text-xs text-gray-400 mb-1">Luas Lahan Anda (m²)</label>
                                 <input type="number" id="landInput" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500 transition" placeholder="Contoh: 100" value="100">
                             </div>
-                            <button onclick="calculateRevenue()" class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-2 rounded-lg transition shadow-lg flex justify-center items-center gap-2">
-                                <span>Hitung & Minta Saran AI</span>
-                                <span class="text-lg">🤖</span>
-                            </button>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="calculateRevenue()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition shadow-lg">
+                                    Hitung Manual
+                                </button>
+                                <button onclick="calculateWithAI()" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-2 rounded-lg transition shadow-lg flex justify-center items-center gap-2">
+                                    <span>Analisa AI</span>
+                                    <span class="text-lg">✨</span>
+                                </button>
+                            </div>
                             
                             <div id="calcResult" class="pt-4 border-t border-gray-700 mt-4 hidden">
                                 <div class="flex justify-between items-center mb-2">
@@ -265,16 +270,11 @@
                                 </div>
                                 
                                 <!-- AI Advice Container -->
-                                <div class="bg-gray-800 rounded-lg p-3 border border-gray-700">
+                                <div id="aiAdviceContainer" class="hidden bg-gray-800 rounded-lg p-3 border border-gray-700">
                                     <p class="text-xs text-purple-300 font-bold mb-1 flex items-center">
                                         <span class="mr-1">💡</span> Saran Strategis AI:
                                     </p>
-                                    <div id="aiAdviceContent" class="text-xs text-gray-300 leading-relaxed">
-                                        <div class="flex items-center gap-2">
-                                            <span class="typing-indicator"><span></span><span></span><span></span></span>
-                                            Menghubungkan ke pakar...
-                                        </div>
-                                    </div>
+                                    <div id="aiAdviceContent" class="text-xs text-gray-300 leading-relaxed"></div>
                                 </div>
                             </div>
                         </div>
@@ -283,7 +283,7 @@
             </div>
         </section>
 
-        <!-- SECTION 2: EKOSISTEM & MITRA (THE WHO & WHERE) -->
+        <!-- SECTION 2: EKOSISTEM & MITRA -->
         <section id="ekosistem" class="scroll-mt-24 bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
             <div class="text-center max-w-3xl mx-auto mb-12">
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">Sinergi Lokasi & Kemitraan</h3>
@@ -343,7 +343,7 @@
             </div>
         </section>
 
-        <!-- SECTION 3: PELAKSANAAN (THE HOW) -->
+        <!-- SECTION 3: PELAKSANAAN -->
         <section id="pelaksanaan" class="scroll-mt-24">
             <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between">
                 <div class="border-l-4 border-amber-500 pl-4">
@@ -391,7 +391,7 @@
             </div>
         </section>
 
-        <!-- SECTION 4: ROADMAP & SUMBER DAYA (THE FUTURE) -->
+        <!-- SECTION 4: ROADMAP -->
         <section id="roadmap" class="scroll-mt-24 grid grid-cols-1 lg:grid-cols-3 gap-12">
             
             <!-- Long Term Vision -->
@@ -457,7 +457,7 @@
     </footer>
 
     <!-- AI CHAT FLOATING BUTTON -->
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl z-50 transform transition hover:scale-110 flex items-center justify-center group">
+    <button onclick="openChat()" class="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl z-50 transform transition hover:scale-110 flex items-center justify-center group">
         <span class="text-2xl mr-2">✨</span>
         <span class="font-bold hidden group-hover:block transition-all duration-300">Tanya Pakar</span>
     </button>
@@ -504,24 +504,54 @@
     <script>
         // --- 1. CONFIG & AUTHENTICATION ---
         
-        // This variable will hold the user's key
         let apiKey = "";
+        let pendingAction = null; // To store function callback
 
-        // Function to check auth on load
+        // Function to check auth on load (Only updates UI, does not block)
         function checkAuth() {
             const storedKey = localStorage.getItem("gemini_api_key");
-            const overlay = document.getElementById("loginOverlay");
+            const badge = document.getElementById("aiStatusBadge");
             
             if (storedKey) {
                 apiKey = storedKey;
-                overlay.classList.add("hidden"); // Unlock screen
+                badge.classList.remove("hidden");
+                badge.classList.add("flex");
             } else {
-                overlay.classList.remove("hidden"); // Lock screen
+                badge.classList.add("hidden");
+                badge.classList.remove("flex");
             }
         }
 
-        // Function to handle Login
-        function handleLogin() {
+        // Triggered when user wants to perform an AI action but has no key
+        function promptApiKey(callback) {
+            pendingAction = callback;
+            const modal = document.getElementById("apiKeyModal");
+            const modalContent = document.getElementById("apiKeyModalContent");
+            
+            modal.classList.remove("hidden");
+            // Small delay for transition
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modalContent.classList.remove("scale-95");
+                modalContent.classList.add("scale-100");
+            }, 10);
+        }
+
+        function closeApiKeyModal() {
+            const modal = document.getElementById("apiKeyModal");
+            const modalContent = document.getElementById("apiKeyModalContent");
+            
+            modal.classList.add("opacity-0");
+            modalContent.classList.remove("scale-100");
+            modalContent.classList.add("scale-95");
+            
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                pendingAction = null; // Clear pending action
+            }, 300);
+        }
+
+        function saveApiKey() {
             const inputKey = document.getElementById("apiKeyInput").value.trim();
             
             if (inputKey.length < 10 || !inputKey.startsWith("AIza")) {
@@ -532,31 +562,33 @@
             localStorage.setItem("gemini_api_key", inputKey);
             apiKey = inputKey;
             
-            // Fade out overlay
-            const overlay = document.getElementById("loginOverlay");
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.classList.add("hidden");
-            }, 500);
-        }
+            // Update UI
+            checkAuth();
+            closeApiKeyModal();
 
-        // Function to handle Logout
-        function handleLogout() {
-            if(confirm("Apakah Anda yakin ingin menghapus API Key dari browser ini?")) {
-                localStorage.removeItem("gemini_api_key");
-                location.reload(); // Reload to lock screen
+            // Execute pending action if any
+            if (pendingAction) {
+                pendingAction();
+                pendingAction = null;
             }
         }
 
-        // Run auth check on load
+        function handleLogout() {
+            if(confirm("Hapus API Key? Fitur AI akan non-aktif sampai Anda memasukkan kunci lagi.")) {
+                localStorage.removeItem("gemini_api_key");
+                apiKey = "";
+                checkAuth();
+                // Close any open AI panels
+                document.getElementById("aiAdviceContainer").classList.add("hidden");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", checkAuth);
+
 
         // --- 2. API CALLER ---
 
-        // Helper to call Gemini API
         async function callGemini(prompt, systemInstruction = "") {
-            if (!apiKey) return "API Key belum dimasukkan. Silakan reload halaman.";
-
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
             const payload = {
@@ -573,9 +605,6 @@
                 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    if(errorData.error?.code === 400 || errorData.error?.code === 403) {
-                         alert("API Key tidak valid atau kuota habis. Silakan logout dan masukkan key baru.");
-                    }
                     throw new Error(errorData.error?.message || "API Error");
                 }
                 
@@ -583,13 +612,18 @@
                 return data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak dapat menjawab saat ini.";
             } catch (error) {
                 console.error(error);
+                if (error.message.includes("API key") || error.message.includes("403")) {
+                    alert("API Key tidak valid. Silakan masukkan key baru.");
+                    localStorage.removeItem("gemini_api_key");
+                    apiKey = "";
+                    checkAuth();
+                }
                 return `Maaf, terjadi kesalahan: ${error.message}`;
             }
         }
 
+
         // --- 3. CHART VISUALIZATIONS ---
-        
-        // Price Comparison Chart
         const ctxPrice = document.getElementById('priceChart').getContext('2d');
         new Chart(ctxPrice, {
             type: 'bar',
@@ -616,7 +650,6 @@
             }
         });
 
-        // Budget Allocation Chart
         const ctxBudget = document.getElementById('budgetChart').getContext('2d');
         new Chart(ctxBudget, {
             type: 'doughnut',
@@ -639,21 +672,22 @@
             }
         });
 
-        // --- 4. INTERACTIVE CALCULATOR WITH AI ---
-        async function calculateRevenue() {
+
+        // --- 4. CALCULATOR FUNCTIONS ---
+        
+        // Pure Math Calculation (No AI needed)
+        function calculateRevenue() {
             const input = document.getElementById('landInput').value;
             const resRegular = document.getElementById('resRegular');
             const resBlack = document.getElementById('resBlack');
             const resultDiv = document.getElementById('calcResult');
-            const aiContent = document.getElementById('aiAdviceContent');
 
             if(!input || input <= 0) {
                 alert("Mohon masukkan luas lahan yang valid (angka > 0).");
                 return;
             }
 
-            // Math Calculation
-            const yieldKg = input * 1; // 1 kg/m2
+            const yieldKg = input * 1; 
             const priceRegular = 25000;
             const priceBlack = 250000;
             const totalBlack = yieldKg * priceBlack;
@@ -664,18 +698,49 @@
             resBlack.innerText = formatter.format(totalBlack);
             
             resultDiv.classList.remove('hidden');
+        }
 
-            // Call AI for Advice
+        // AI Advice Trigger
+        function calculateWithAI() {
+            // First run math
+            calculateRevenue();
+            
+            // Check auth
+            if (!apiKey) {
+                promptApiKey(calculateWithAI); // Retry this function after auth
+                return;
+            }
+
+            const input = document.getElementById('landInput').value;
+            if(!input || input <= 0) return;
+
+            const yieldKg = input * 1; 
+            const priceBlack = 250000;
+            const totalBlack = yieldKg * priceBlack;
+            const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+
+            const aiContainer = document.getElementById('aiAdviceContainer');
+            const aiContent = document.getElementById('aiAdviceContent');
+            
+            aiContainer.classList.remove('hidden');
             aiContent.innerHTML = '<div class="flex items-center gap-2"><span class="typing-indicator"><span></span><span></span><span></span></span> Menganalisa lahan Anda...</div>';
             
             const systemPrompt = "Anda adalah konsultan agribisnis profesional untuk proyek Jahe Hitam di Desa Lebak, Matesih. Berikan saran strategis yang singkat (maksimal 3 poin bullet) berdasarkan luas lahan pengguna. Gunakan nada profesional, optimis, dan bahasa Indonesia yang baik.";
             const userPrompt = `Saya punya lahan seluas ${input} m² di dataran tinggi Matesih untuk Jahe Hitam. Estimasi omzet kasar Rp ${formatter.format(totalBlack)}. Berikan saran strategis khusus untuk skala lahan ini (misal: apakah butuh banyak tenaga kerja, atau fokus perawatan intensif?).`;
 
-            const advice = await callGemini(userPrompt, systemPrompt);
-            aiContent.innerHTML = marked.parse(advice);
+            callGemini(userPrompt, systemPrompt).then(advice => {
+                aiContent.innerHTML = marked.parse(advice);
+            });
         }
 
+
         // --- 5. CHATBOT LOGIC ---
+
+        function openChat() {
+            // Chat UI can open without key, but sending needs key
+            toggleChat();
+        }
+
         function toggleChat() {
             const modal = document.getElementById('chatModal');
             modal.classList.toggle('hidden');
@@ -695,6 +760,20 @@
 
             if (!userMsg) return;
 
+            // Check Auth BEFORE sending
+            if (!apiKey) {
+                toggleChat(); // Close chat momentarily or keep open? 
+                // Better UX: Close chat, show prompt, then reopen chat?
+                // Let's just show prompt.
+                promptApiKey(() => {
+                    // Re-open chat if it was closed or just proceed
+                    const modal = document.getElementById('chatModal');
+                    if (modal.classList.contains('hidden')) modal.classList.remove('hidden');
+                    sendMessage(); // Retry send
+                });
+                return;
+            }
+
             // Render User Message
             history.innerHTML += `<div class="chat-bubble chat-user shadow-sm">${userMsg}</div>`;
             input.value = '';
@@ -705,16 +784,15 @@
             history.innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai"><span class="typing-indicator"><span></span><span></span><span></span></span></div>`;
             history.scrollTop = history.scrollHeight;
 
-            // Call AI
-            const systemPrompt = "Anda adalah 'Pak Tani Cerdas', ahli pertanian spesialis Jahe Hitam (Kaempferia parviflora) untuk Program Desa Binaan di Desa Lebak, Matesih, Karanganyar. Anda mewakili tim UNS dan Ratu Botani Solo. Jawablah pertanyaan pengguna dengan ramah, praktis, dan berwawasan luas. Fokus pada aspek teknis budidaya, ekonomi, dan manfaat kesehatan. Jawaban harus ringkas (maksimal 3-4 kalimat) kecuali diminta menjelaskan detail.";
+            const systemPrompt = "Anda adalah 'Pak Tani Cerdas', ahli pertanian spesialis Jahe Hitam (Kaempferia parviflora). Jawablah pertanyaan pengguna dengan ramah, praktis, dan berwawasan luas. Fokus pada aspek teknis budidaya, ekonomi, dan manfaat kesehatan. Jawaban harus ringkas (maksimal 3-4 kalimat).";
             
             const response = await callGemini(userMsg, systemPrompt);
 
-            // Replace Loading with Response
             document.getElementById(loadingId).remove();
             history.innerHTML += `<div class="chat-bubble chat-ai shadow-sm">${marked.parse(response)}</div>`;
             history.scrollTop = history.scrollHeight;
         }
+
 
         // --- 6. NAV HIGHLIGHTING ---
         window.addEventListener('scroll', () => {
